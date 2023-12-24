@@ -1,0 +1,9 @@
+node_modules
+dist
+.expo
+.expo-shared
+web-build
+babel.config.js
+metro.config.js
+app.config.js
+app.json

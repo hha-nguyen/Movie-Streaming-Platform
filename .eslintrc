@@ -1,0 +1,37 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "react",
+    "react-native",
+    "@typescript-eslint",
+    "prettier",
+    "react-hooks",
+    "@tanstack/query"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "rules": {
+    "react-native/no-unused-styles": 1,
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      {
+        "additionalHooks": "(useAnimatedStyle|useDerivedValue|useAnimatedProps)"
+      }
+    ],
+    "@tanstack/query/exhaustive-deps": "warn",
+    "@tanstack/query/prefer-query-object-syntax": "warn"
+  }
+}
