@@ -18,12 +18,14 @@ import { useUserStore } from '../../stores/userStore';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParams } from '../../types/navigation';
 import storage from '@react-native-firebase/storage';
+import { useLoginQuery } from './hooks/useLoginQuery';
 
 const SignIn = () => {
   const { width } = Dimensions.get('window');
   const heightValue = useSharedValue(0);
   const { setUser } = useUserStore();
   const { navigate } = useNavigation<NavigationProp<RootStackParams>>();
+  const { mutateAsync: signIn, isPending: loggingIn } = useLoginQuery();
 
   const {
     control,

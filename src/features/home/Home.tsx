@@ -11,6 +11,8 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParams } from '../../types/navigation';
 import { BlurView } from 'expo-blur';
 import { useUserStore } from '../../stores/userStore';
+import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
+import { useSharedValue } from 'react-native-reanimated';
 
 const Home = () => {
   const { navigate } = useNavigation<NavigationProp<RootStackParams>>();
@@ -18,6 +20,9 @@ const Home = () => {
   const { width, height } = Dimensions.get('window');
   const [movies, setMovies] = useState<Movie[]>([]);
   const { user } = useUserStore();
+  const ref = React.useRef<ICarouselInstance>(null);
+  const progress = useSharedValue<number>(0);
+
   useEffect(() => {
     (async () => {
       if (movies.length === 0) {
@@ -35,42 +40,32 @@ const Home = () => {
     <Box flex={1} bgColor={'#000000'}>
       <ScrollView>
         {movies.length > 0 && (
-          <Box>
-            <Image
-              source={{ uri: movies[0].poster }}
-              style={{ width, height: (width * 3) / 2 }}
-            />
-            <Box position={'absolute'} w={'100%'}>
-              <BlurView intensity={20} tint={'dark'}>
+          <Box py={80}>
+            <Carousel
+              ref={ref}
+              width={width}
+              height={(width * 4) / 3}
+              data={movies}
+              mode={'parallax'}
+              renderItem={({ index }) => (
                 <Box
-                  flexDirection={'row'}
-                  justifyContent={'space-between'}
-                  mt={top + 16}
-                  mx={16}
-                  mb={16}>
+                  flex={1}
+                  onPress={() =>
+                    navigate('MovieDetail', { movie: movies[index] })
+                  }>
                   <Image
-                    source={images.logo}
-                    style={{ width: 50, height: 50 }}
+                    source={{ uri: movies[index].poster }}
+                    style={{ width, height: (width * 3) / 2 }}
                   />
-                  <Box
-                    onPress={() => {
-                      navigate('Profile');
-                    }}>
-                    <Image
-                      source={
-                        user && user.photoURL
-                          ? { uri: user.photoURL }
-                          : images.accountDefault
-                      }
-                      style={{ width: 50, height: 50, borderRadius: 25 }}
-                    />
-                  </Box>
                 </Box>
-              </BlurView>
-            </Box>
+              )}
+              autoPlay
+              loop
+              autoPlayInterval={3000}
+            />
             <Box p={16}>
               <Text bold h2>
-                Top pick for {user?.displayName}
+                Recommended for you
               </Text>
               <ScrollView horizontal={true} style={{ marginTop: 16 }}>
                 {movies.map((movie, index) => (
@@ -78,11 +73,21 @@ const Home = () => {
                     key={index}
                     onPress={() => {
                       navigate('MovieDetail', { movie });
-                    }}>
+                    }}
+                    width={100}
+                    mr={16}
+                    overflow={'hidden'}
+                    borderRadius={8}>
                     <Image
                       source={{ uri: movie.poster }}
-                      style={{ width: 100, height: 150, marginRight: 8 }}
+                      style={{ width: 100, height: 150 }}
                     />
+                    <Box mt={8}>
+                      <Text bold h4 numberOfLines={2}>
+                        {movie.title}
+                      </Text>
+                      <Text color={'red'}>{movie.type.split(',')[0]}</Text>
+                    </Box>
                   </Box>
                 ))}
               </ScrollView>
@@ -90,6 +95,41 @@ const Home = () => {
           </Box>
         )}
       </ScrollView>
+      <BlurView
+        intensity={50}
+        tint={'dark'}
+        style={{
+          flexDirection: 'row',
+          paddingBottom: 16,
+          paddingTop: top + 16,
+          position: 'absolute',
+          top: 0,
+          width: '100%',
+        }}>
+        <Image
+          source={images.logo}
+          style={{ width: 40, height: 40, marginHorizontal: 16 }}
+        />
+        <ScrollView
+          horizontal
+          contentContainerStyle={{ alignItems: 'center' }}
+          showsHorizontalScrollIndicator={false}>
+          {['TV Shows', 'Movies', 'Categories', 'My List'].map(
+            (item, index) => (
+              <Box
+                key={index}
+                ml={16}
+                px={16}
+                py={8}
+                borderColor={'#494949'}
+                border={1}
+                borderRadius={32}>
+                <Text bold>{item}</Text>
+              </Box>
+            ),
+          )}
+        </ScrollView>
+      </BlurView>
     </Box>
   );
 };

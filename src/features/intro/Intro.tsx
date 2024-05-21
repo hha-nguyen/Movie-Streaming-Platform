@@ -12,7 +12,7 @@ const Intro = () => {
   useEffect(() => {
     setTimeout(() => {
       if (user) {
-        navigate('Home');
+        navigate('MainTab');
       } else {
         navigate('SignIn');
       }

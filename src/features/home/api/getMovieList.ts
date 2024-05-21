@@ -7,5 +7,9 @@ export const getMovieList = async () => {
     .get()
     .then(querySnapshot => {
       return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    })
+    .catch(err => {
+      console.log('Error getting movies', err);
+      return [] as Movie[];
     });
 };
